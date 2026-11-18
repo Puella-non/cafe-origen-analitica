@@ -10,6 +10,11 @@ function totalVendido(ventas) {
     return total;
 }
 
+function totalVendidoM(ventas){
+    return ventas.reduce
+    
+}
+
 // Devuelve el registro completo, no solo el valor
 function ventaMayor (ventas) {
     if (ventas.length === 0) return null; // decisión documentada en la bitácora.
@@ -47,6 +52,8 @@ function ticketPromedio(ventas) {
   }
   return validas === 0 ? 0 : total / validas;
 }
+
+
 
 //Entrada con arreglo completo
 console.log(totalVendido(ventas), unidadesVendidas(ventas), ventaMayor(ventas).id);
