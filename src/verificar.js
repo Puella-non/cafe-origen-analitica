@@ -1,26 +1,20 @@
-const ventas = require("./datos")
-const funciones = require("./analitica")
+const ventas = require("./datos");
+const funciones = require("./analitica");
 
-const nombreCiudad = (texto) => {
-  const t = normalizar(texto);
-  return t[0].toUpperCase() + t.slice(1);   // "medellín " → "Medellín"
-};
-function totalPorCiudad(ventas) {
-  return ventas.reduce((acc, v) => {
-    const c = nombreCiudad(v.ciudad);
-    acc[c] = (acc[c] || 0) + valorVenta(v);
-    return acc;
-  }, {});
+function comparar(nombre, resultadoCiclo, resultadoMetodo) {
+  const estado = resultadoCiclo === resultadoMetodo ? "OK" : "DIFERENTE";
+  console.log(`${nombre}: ${estado} (ciclo=${resultadoCiclo}, métodos=${resultadoMetodo})`);
 }
 
-// Los k productos con más valor vendido, de mayor a menor (solo los nombres)
-function topProductosPorValor(ventas, k) {
-  const porProducto = ventas.reduce((acc, v) => {
-    acc[v.producto] = (acc[v.producto] || 0) + valorVenta(v);
-    return acc;
-  }, {});
-  return Object.entries(porProducto)   // arreglo nuevo: no toca "ventas"
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, k)
-    .map(([producto]) => producto);
+const casos = [
+  { etiqueta: "completo", datos: ventas },
+  { etiqueta: "un elemento", datos: [ventas[2]] },
+  { etiqueta: "vacío", datos: [] },
+];
+
+for (const caso of casos) {
+  console.log(`--- Entrada: ${caso.etiqueta} ---`);
+  comparar("totalVendido", funciones.totalVendido(caso.datos), funciones.totalVendidoM(caso.datos));
+  comparar("unidadesVendidas", funciones.unidadesVendidas(caso.datos), funciones.unidadesVendidasM(caso.datos));
+  comparar("ventasPorCiudad", funciones.ventasPorCiudad(caso.datos, "medellín"), funciones.ventasPorCiudadM(caso.datos, "medellín"));
 }

@@ -78,8 +78,93 @@ Se calcula cantidad × precio de cada venta y gana la mayor.
 
 El mayor es 168000, de la venta 10.
 A mano: id 10. Programa: 10 coinciden
+----------------------------------------------------------------------------------------------------------------------------------
 
+## Las cinco preguntas de cada función
 
+### totalVendido
+- ¿Qué recorro? Todas las ventas, con `for...of`.
+- ¿Qué filtro? Nada.
+- ¿Qué transformo? Cada venta en su valor (cantidad × precio).
+- ¿Qué acumulo? La suma de los valores en `total`.
+- ¿Cómo agrupo? No agrupo.
+
+### totalVendidoM
+- ¿Qué recorro? Todas las ventas, con `reduce`.
+- ¿Qué filtro? Nada.
+- ¿Qué transformo? Cada venta en su valor.
+- ¿Qué acumulo? La suma de los valores en `acum`.
+- ¿Cómo agrupo? No agrupo.
+
+### ventaMayor
+- ¿Qué recorro? Todas las ventas.
+- ¿Qué filtro? Nada. Solo reemplazo `mayor` si el valor es estrictamente mayor.
+- ¿Qué transformo? Cada venta en su valor, solo para comparar.
+- ¿Qué acumulo? No sumo; guardo la venta mayor hasta el momento.
+- ¿Cómo agrupo? No agrupo.
+
+### ventasPorCiudad
+- ¿Qué recorro? Todas las ventas.
+- ¿Qué filtro? Las de la ciudad pedida (usando `normalizar`).
+- ¿Qué transformo? Cada venta en su valor.
+- ¿Qué acumulo? La suma de los valores de esa ciudad.
+- ¿Cómo agrupo? No agrupo.
+
+### ventasPorCiudadM
+- ¿Qué recorro? Todas las ventas.
+- ¿Qué filtro? Con `filter`, las de la ciudad pedida.
+- ¿Qué transformo? Cada venta en su valor.
+- ¿Qué acumulo? La suma de los valores con `reduce`.
+- ¿Cómo agrupo? No agrupo.
+
+### unidadesVendidas
+- ¿Qué recorro? Todas las ventas.
+- ¿Qué filtro? Nada.
+- ¿Qué transformo? Nada; uso `cantidad` directo.
+- ¿Qué acumulo? La suma de las unidades.
+- ¿Cómo agrupo? No agrupo.
+
+### unidadesVendidasM
+- ¿Qué recorro? Todas las ventas, con `reduce`.
+- ¿Qué filtro? Nada.
+- ¿Qué transformo? Nada.
+- ¿Qué acumulo? La suma de las unidades.
+- ¿Cómo agrupo? No agrupo.
+
+### ticketPromedio
+- ¿Qué recorro? Todas las ventas.
+- ¿Qué filtro? Solo las ventas válidas (cantidad > 0).
+- ¿Qué transformo? Cada venta en su valor.
+- ¿Qué acumulo? La suma de los valores y un contador de ventas válidas.
+- ¿Cómo agrupo? No agrupo. Al final divido total ÷ ventas válidas.
+
+### nombreCiudad (función auxiliar)
+- ¿Qué recorro? Nada; recibe un solo texto.
+- ¿Qué filtro? Nada.
+- ¿Qué transformo? El texto: sin espacios, en minúscula y con la inicial en mayúscula.
+- ¿Qué acumulo? Nada.
+- ¿Cómo agrupo? No agrupo, pero sirve de clave para agrupar.
+
+### totalPorCiudad
+- ¿Qué recorro? Todas las ventas, con `reduce`.
+- ¿Qué filtro? Nada.
+- ¿Qué transformo? La ciudad en nombre normalizado y la venta en su valor.
+- ¿Qué acumulo? La suma de los valores de cada ciudad.
+- ¿Cómo agrupo? Con un objeto cuya clave es la ciudad normalizada.
+
+### unidadesPorProducto
+- ¿Qué recorro? Todas las ventas, con `reduce`.
+- ¿Qué filtro? Nada.
+- ¿Qué transformo? El producto, sin espacios sobrantes.
+- ¿Qué acumulo? La suma de las unidades de cada producto.
+- ¿Cómo agrupo? Con un objeto cuya clave es el producto.
+
+### topProductosPorValor
+- ¿Qué recorro? Todas las ventas y luego las parejas [producto, valor].
+- ¿Qué filtro? Me quedo con los k primeros (`slice(0, k)`).
+- ¿Qué transformo? Ordeno de mayor a menor (`sort`) y dejo solo los nombres (`map`).
+- ¿Qué acumulo? La suma de los valores de cada producto.
+- ¿Cómo agrupo? Con un objeto cuya clave es el producto.
 
 
 
