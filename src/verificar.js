@@ -18,3 +18,12 @@ for (const caso of casos) {
   comparar("unidadesVendidas", funciones.unidadesVendidas(caso.datos), funciones.unidadesVendidasM(caso.datos));
   comparar("ventasPorCiudad", funciones.ventasPorCiudad(caso.datos, "medellín"), funciones.ventasPorCiudadM(caso.datos, "medellín"));
 }
+
+// Comprobar que ventas conserva su orden original
+const idsAntes = ventas.map(v => v.id).join(",");
+
+funciones.topProductosPorValor(ventas, 3);
+funciones.ventasOrdenadasPorValor(ventas);
+
+const idsDespues = ventas.map(v => v.id).join(",");
+console.log(`Orden de ventas conservado: ${idsAntes === idsDespues ? "OK" : "DIFERENTE"}`);

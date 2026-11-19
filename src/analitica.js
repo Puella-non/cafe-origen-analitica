@@ -97,13 +97,19 @@ function topProductosPorValor(ventas, k) {
     .map(([producto]) => producto);
 }
 
+// Ventas ordenadas de mayor a menor valor, sin modificar el original
+function ventasOrdenadasPorValor(ventas) {
+  return [...ventas].sort((a, b) => valorVentas(b) - valorVentas(a));
+}
+
 module.exports = {
   totalVendido, totalVendidoM,
   unidadesVendidas, unidadesVendidasM,
   ventasPorCiudad, ventasPorCiudadM,
   ticketPromedio,
   ventaMayor, totalPorCiudad, 
-  unidadesPorProducto, topProductosPorValor
+  unidadesPorProducto, topProductosPorValor,
+  ventasOrdenadasPorValor
 };
 
 if (require.main === module) {
@@ -113,7 +119,7 @@ console.log(unidadesVendidasM(ventas));
 console.log(ventasPorCiudadM(ventas, "medellín"));
 console.log(totalPorCiudad(ventas));
 console.log(unidadesPorProducto(ventas));
-console.log(topProductosPorValor(ventas));
+console.log(topProductosPorValor(ventas, 3));
 
 console.log(totalVendido(ventas), unidadesVendidas(ventas), ventaMayor(ventas).id);
 console.log(Math.round(ticketPromedio(ventas)), ventasPorCiudad(ventas, "medellín"));
