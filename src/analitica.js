@@ -102,6 +102,11 @@ function ventasOrdenadasPorValor(ventas) {
   return [...ventas].sort((a, b) => valorVentas(b) - valorVentas(a));
 }
 
+// Ventas de una fecha exacta (formato "AAAA-MM-DD"). Si no hay, devuelve []
+function ventasDelDia(ventas, fecha) {
+  return ventas.filter(v => v.fecha === fecha);
+}
+
 module.exports = {
   totalVendido, totalVendidoM,
   unidadesVendidas, unidadesVendidasM,
@@ -109,7 +114,7 @@ module.exports = {
   ticketPromedio,
   ventaMayor, totalPorCiudad, 
   unidadesPorProducto, topProductosPorValor,
-  ventasOrdenadasPorValor
+  ventasOrdenadasPorValor, ventasDelDia
 };
 
 if (require.main === module) {

@@ -165,6 +165,63 @@ A mano: id 10. Programa: 10 coinciden
 - ¿Qué transformo? Ordeno de mayor a menor (`sort`) y dejo solo los nombres (`map`).
 - ¿Qué acumulo? La suma de los valores de cada producto.
 - ¿Cómo agrupo? Con un objeto cuya clave es el producto.
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+## Depuración de errores reportados por la gerente
+
+Versión preliminar reconstruida a partir de la descripción de la gerente. Está en `src/depurar.js`.
+
+### Error 1: "Bogotá aparecía dos veces"
+
+- **Síntoma:** la misma ciudad aparecía en dos filas separadas, con totales parciales.
+- **Entrada que lo produce:** dos ventas de Bogotá, una con "Bogotá" y otra con "Bogotá " (espacio al final).
+- **Hipótesis:** las claves se ven iguales pero son textos distintos por espacios sobrantes.
+- **Prueba realizada:** imprimí la longitud de cada clave: [6, 7].
+- **Causa:** la versión preliminar usa `v.ciudad` como clave sin limpiar el texto.
+- **Corrección:** `totalPorCiudad` usa `nombreCiudad`, que aplica `normalizar` (`trim` + `toLowerCase`) antes de agrupar.
+- **Demostración de que ya no ocurre:**
+  - Preliminar: `{ 'Bogotá': 95000, 'Bogotá ': 95000 }` → 2 claves, longitudes [6, 7]
+  - Actual: `{ 'Bogotá': 190000 }` → 1 clave
+  - Con `datos.js`, la actual devuelve exactamente 4 ciudades.
+  - Con `node src/explorar` se ven los espacios sobrantes en las ciudades de las ventas 5, 9 y 11 (por ejemplo `[medellín ]`).
+
+### Error 2: "El ticket promedio daba NaN en un día sin ventas"
+
+- **Síntoma:** el ticket promedio mostraba NaN.
+- **Entrada que lo produce:** arreglo vacío, por ejemplo `ventasDelDia(ventas, "2026-09-07")`.
+- **Hipótesis:** se divide 0 entre 0 porque no hay ventas.
+- **Prueba realizada:** ejecuté la versión preliminar con `[]` y luego `ticketPromedio` con el mismo arreglo.
+- **Causa:** la versión preliminar divide `total / datos.length` sin comprobar que haya ventas.
+- **Corrección:** `ticketPromedio` devuelve 0 si no hay ventas válidas: `validas === 0 ? 0 : total / validas`.
+- **Demostración de que ya no ocurre:**
+  - Preliminar: `NaN`
+  - Actual: `0` (`Number.isNaN` → `false`)
+
+### Salida completa de la consola
+
+```
+PS C:\Users\laura\Downloads\cafe-origen-analitica> node src/depurar
+=== ERROR 1: ciudad duplicada ===
+Preliminar, entrada mínima: { 'Bogotá': 95000, 'Bogotá ': 95000 }
+Longitud de cada clave: [ 6, 7 ]
+Preliminar, datos.js: [
+  'Medellín',
+  'Bogotá',
+  'Cali',
+  'medellín ',
+  'Cali ',
+  'Pereira',
+  'Medellín  '
+]
+Actual, entrada mínima: { 'Bogotá': 190000 }
+Actual, datos.js: [ 'Medellín', 'Bogotá', 'Cali', 'Pereira' ]
+
+=== ERROR 2: ticket promedio NaN ===
+Ventas del 2026-09-07: []
+Preliminar: NaN
+Actual: 0
+¿Actual es NaN? false
+```
 
 
 
