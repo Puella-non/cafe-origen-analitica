@@ -222,6 +222,17 @@ Preliminar: NaN
 Actual: 0
 ¿Actual es NaN? false
 ```
+-----------------------------------------------------------------------------------------------------------------------------
+
+## Predicción: si n se multiplica por 10, ¿las operaciones se multiplican por cuánto?
+
+| Función | Predicción | Razón |
+|---------|-----------|-------|
+| totalVendido | × 10 | Una operación por venta: recorre todas una vez |
+| totalPorCiudad | × 10 | Una pasada por las ventas; las ciudades (4) no crecen con n |
+| ventaMayor | × 10 | Una pasada comparando cada venta con la mayor |
+| primeraVenta | × 1 | Solo mira la posición 0, sin importar cuántas ventas haya |
+
 
 
 

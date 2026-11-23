@@ -114,7 +114,8 @@ module.exports = {
   ticketPromedio,
   ventaMayor, totalPorCiudad, 
   unidadesPorProducto, topProductosPorValor,
-  ventasOrdenadasPorValor, ventasDelDia
+  ventasOrdenadasPorValor, ventasDelDia,
+  valorVentas, normalizar, nombreCiudad
 };
 
 if (require.main === module) {
