@@ -54,3 +54,4 @@ README.md        Qué es el proyecto, cómo ejecutarlo y qué preguntas responde
 ## Decisiones de diseño
 
 - **Sin ventas:** los totales y el ticket promedio devuelven `0`; `ventaMayor` devuelve `null`; las agrupaciones devuelven `{}` y el top
+

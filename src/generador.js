@@ -26,3 +26,5 @@ function generarVentas(n) {
 }
 
 module.exports = { generarVentas };
+
+

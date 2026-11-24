@@ -233,6 +233,67 @@ Actual: 0
 | ventaMayor | × 10 | Una pasada comparando cada venta con la mayor |
 | primeraVenta | × 1 | Solo mira la posición 0, sin importar cuántas ventas haya |
 
+## Medición: ¿se cumplió la predicción?
 
+Ejecuté `node src/medir` con ventas generadas por `generarVentas(100)` y `generarVentas(1000)`:
 
+```
+--- n = 100 ---
+totalVendido → ops: 100
+totalPorCiudad → ops: 100
+ventaMayor → ops: 100
+primeraVenta → ops: 1
+--- n = 1000 ---
+totalVendido → ops: 1000
+totalPorCiudad → ops: 1000
+ventaMayor → ops: 1000
+primeraVenta → ops: 1
+```
+| Función | Predicción | Medido | ¿Coincide? |
+|---------|-----------|--------|------------|
+| totalVendido | × 10 | 100 → 1000 (× 10) | Sí |
+| totalPorCiudad | × 10 | 100 → 1000 (× 10) | Sí |
+| ventaMayor | × 10 | 100 → 1000 (× 10) | Sí |
+| primeraVenta | × 1 | 1 → 1 (× 1) | Sí |
 
+## Medición con cuatro tamaños
+
+| Función | n = 100 | n = 1.000 | n = 10.000 | n = 100.000 |
+|---------|---------|-----------|------------|-------------|
+| totalVendido | 100 | 1.000 | 10.000 | 100.000 |
+| totalPorCiudad | 100 | 1.000 | 10.000 | 100.000 |
+| ventaMayor | 100 | 1.000 | 10.000 | 100.000 |
+| primeraVenta | 1 | 1 | 1 | 1 |
+
+Cada vez que n se multiplica por 10, las tres primeras funciones multiplican sus operaciones por 10 (crecimiento lineal). `primeraVenta` se mantiene en 1 (constante). Las cuatro predicciones se cumplieron.
+
+## Comparación de predicciones y clasificación
+
+| Función | Predicción | Medido (n = 100 → 100.000) | ¿Coincide? | Clasificación |
+|---------|-----------|----------------------------|------------|---------------|
+| totalVendido | × 10 | 100 → 100.000 (× 10 cada vez) | Sí | O(n) |
+| totalPorCiudad | × 10 | 100 → 100.000 (× 10 cada vez) | Sí | O(n) |
+| ventaMayor | × 10 | 100 → 100.000 (× 10 cada vez) | Sí | O(n) |
+| primeraVenta | × 1 | 1 → 1 (× 1 cada vez) | Sí | O(1) |
+
+### totalVendido: O(n)
+- **Código:** un solo `for...of` que recorre todas las ventas y hace `c.ops++` una vez por venta.
+- **Números:** con n = 100.000 hizo 100.000 operaciones, o sea n operaciones. Al pasar de 100 a 1.000 se multiplicó por 10, igual que n.
+
+### totalPorCiudad: O(n)
+- **Código:** un solo `for...of`. Dentro del ciclo, buscar o actualizar una ciudad en el objeto cuenta como un paso, y las ciudades (4) no crecen con n.
+- **Números:** mismas operaciones que `totalVendido` en todos los tamaños (× 10 cada vez).
+
+### ventaMayor: O(n)
+- **Código:** un solo `for...of` que compara cada venta con la mayor hasta el momento. Dentro del ciclo hace dos cálculos de valor, pero es una cantidad fija por vuelta, no crece con n.
+- **Números:** 100 → 1.000 → 10.000 → 100.000 operaciones (× 10 cada vez).
+
+### primeraVenta: O(1)
+- **Código:** no tiene ciclo; solo mira `ventas[0]`.
+- **Números:** hizo 1 operación con n = 100 y también con n = 100.000 (× 1 cada vez).
+
+### ¿Alguna es O(n²)?
+Ninguna. Para que una función fuera O(n²) tendría que tener un ciclo dentro de otro, ambos recorriendo las ventas (por ejemplo, comparar cada venta con todas las demás). Con n × 10, sus operaciones se multiplicarían por 100. Ninguna de las funciones medidas lo hace: todas tienen a lo sumo un ciclo.
+
+### Conclusión
+Las cuatro predicciones se cumplieron. Con 100.000 ventas, las funciones lineales hacen 100.000 operaciones y `primeraVenta` hace 1.
