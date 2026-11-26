@@ -1,5 +1,6 @@
 const { generarVentas } = require("./generador");
 const f = require("./instrumentadas");
+const { clientesRecurrentes } = require("./recurrentes");
 
 const funciones = ["totalVendido", "totalPorCiudad", "ventaMayor", "primeraVenta"];
 const tamanos = [100, 1000, 10000, 100000];
@@ -31,3 +32,11 @@ for (let i = 1; i < filas.length; i++) {
 
 console.log("Factor de crecimiento al multiplicar n por 10");
 console.table(factores);
+
+for (const n of [1000, 2000, 4000, 8000, 16000]) {
+  const ventas = generarVentas(n);
+  console.time(`n = ${n}`);
+  clientesRecurrentes(ventas);
+  console.timeEnd(`n = ${n}`);
+}
+

@@ -18,8 +18,6 @@ Cada elemento del arreglo representa una venta (una transacción), no un cliente
 | cantidad  | number | Número de unidades vendidas en la transacción. |
 | precio    | number | Precio por unidad en pesos colombianos (COP). No es el total de la venta. |
 
-**Dato derivado (no existe en la tabla):** total de la venta = `cantidad * precio`.
-
 -----------------------------------------------------------------------------------------------------------
 Pruebas con las cinco primeras funciones de analitica.js:
 
@@ -297,3 +295,96 @@ Ninguna. Para que una función fuera O(n²) tendría que tener un ciclo dentro d
 
 ### Conclusión
 Las cuatro predicciones se cumplieron. Con 100.000 ventas, las funciones lineales hacen 100.000 operaciones y `primeraVenta` hace 1.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+## Traza de clientesRecurrentes con 5 ventas
+
+Clientes por posición: [C01, C02, C01, C03, C02]
+
+| i | cliente i | j recorridos | Comparaciones | ¿Coinciden? | recurrentes después |
+|---|-----------|--------------|---------------|-------------|---------------------|
+| 0 | C01 | 1, 2, 3, 4 | 4 | j=2 (C01 = C01) → agrega C01 | [C01] |
+| 1 | C02 | 2, 3, 4 | 3 | j=4 (C02 = C02) → agrega C02 | [C01, C02] |
+| 2 | C01 | 3, 4 | 2 | ninguna | [C01, C02] |
+| 3 | C03 | 4 | 1 | ninguna | [C01, C02] |
+| 4 | C02 | (ninguno) | 0 | no hay ciclo interno | [C01, C02] |
+
+**Total de comparaciones: 4 + 3 + 2 + 1 + 0 = 10**
+**Resultado:** [C01, C02]
+
+Con la tabla se ve que C03 aparece una sola vez, así que no es recurrente.
+
+## Generalización: comparaciones con n ventas
+
+- Con i = 0 se hacen n − 1 comparaciones.
+- Con i = 1 se hacen n − 2.
+- ... y así hasta i = n − 1, que hace 0.
+
+Total = (n − 1) + (n − 2) + ... + 2 + 1 + 0 = **n × (n − 1) / 2**
+
+Por qué da esa fórmula: si sumas la serie con ella misma al revés, cada pareja suma n − 1, y hay n parejas. Eso da n × (n − 1), que cuenta todo dos veces, así que se divide entre 2.
+
+Verificación:
+- n = 5 → 5 × 4 / 2 = 10 ✔ (coincide con la traza)
+- n = 12 (datos reales) → 12 × 11 / 2 = 66
+
+| n | n × (n − 1) / 2 |
+|---|-----------------|
+| 100 | 4.950 |
+| 1.000 | 499.500 |
+| 10.000 | 49.995.000 |
+
+Cuando n se multiplica por 10, las comparaciones se multiplican por casi 100. El término dominante es n² / 2, por eso la función es **O(n²)**.
+--------------------------------------------------------------------------------------------------------------------------------------------------
+
+## Tiempo de ejecución de clientesRecurrentes
+
+Medido con `console.time` y `console.timeEnd`, con datos de `generarVentas(n)`.
+
+| n | Tiempo (ms) | Factor frente al anterior |
+|---|-------------|---------------------------|
+| 1.000 | 10,49 | — |
+| 2.000 | 39,51 | × 3,77 |
+| 4.000 | 124,61 | × 3,15 |
+| 8.000 | 549,56 | × 4,41 |
+| 16.000 | 2257 | × 4,11 |
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+## Análisis: ¿qué pasa con el tiempo cuando n se duplica?
+
+Al duplicar n, el tiempo de `clientesRecurrentes` se multiplicó por cerca de 4 en todas las mediciones (entre 3,15 y 4,41). Con 1.000 ventas tardó 10,49 ms y con 16.000 tardó 2257 ms.
+
+Esto coincide con O(n²): la función tiene un ciclo dentro de otro, así que hace n × (n − 1) / 2 comparaciones. Si n se duplica, (2n)² = 4n², o sea 4 veces más comparaciones y, por tanto, unas 4 veces más tiempo. Si la función fuera lineal, el tiempo solo se duplicaría.
+
+De n = 1.000 a n = 16.000 (n × 16), el tiempo creció unas 215 veces, cerca de 16² = 256, lo que confirma el crecimiento cuadrático.
+
+--------------------------------------------------------------------------------------------------------------------------------------------------
+## Estimación de tiempo para n grande
+
+Fórmula (O(n²)): tiempo nuevo = tiempo base × (n nuevo / n base)².
+Base: n = 16.000 → 2257 ms (primera corrida). En una segunda corrida dio 1861 ms; los tiempos varían entre ejecuciones.
+
+| n | Cálculo | Tiempo estimado |
+|---|---------|-----------------|
+| 100.000 | 2257 ms × 6,25² = 2257 × 39,06 | ≈ 88 s (≈ 1,5 min) |
+| 1.000.000 | 2257 ms × 62,5² = 2257 × 3.906 | ≈ 8.816 s (≈ 2,4 horas) |
+
+**Decisión:** la estimación para 100.000 (≈ 88 s) es menor a dos minutos, así que se ejecutó. Para 1.000.000 no se ejecutó, porque tardaría unas 2,4 horas.
+
+**Resultado:** tiempo medido para n = 100.000: 90,13 s (1:30,128). Diferencia frente a la estimación: +2,1 s (≈ 2,4 %). Con la base de 1861 ms de la segunda corrida, la estimación habría sido ≈ 73 s, es decir, 20 % menos que lo medido.
+
+**Estimación recalculada para 1.000.000:** con la medición real de 100.000, 90,13 s × 10² = 9.013 s ≈ 2,5 horas.
+----------------------------------------------------------------------------------------------------------------------------
+## Costo oculto: `recurrentes.includes`
+includes recorre recurrentes en cada coincidencia, en el peor caso añade un factor proporcional al tamaño de esa lista, por lo que la complejidad puede superar O(n²).
+
+## Conclusión para la gerente: ¿por qué el reporte se vuelve lento?
+
+La mayoría de las cuentas del reporte (total vendido, ventas por ciudad, venta mayor) revisan cada venta una sola vez, así que siguen siendo rápidas incluso con 100.000 ventas.
+
+La lentitud aparece al buscar los **clientes que compran más de una vez**: el programa compara cada venta con todas las demás. Por eso, con el doble de ventas el trabajo se multiplica por 4, y con 10 veces más se multiplica por unas 100.
+
+Lo medimos: con 16.000 ventas tarda cerca de 2 segundos y con 100.000 tarda 1 minuto y medio. Con 1.000.000 tardaría unas 2,5 horas (estimado).
+
+Con las 12 ventas actuales no se nota, pero si el negocio crece, esta cuenta sería la primera en volverse inmanejable. 
+

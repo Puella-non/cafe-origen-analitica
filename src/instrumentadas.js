@@ -33,4 +33,18 @@ function primeraVenta(ventas, c) {
   return ventas.length === 0 ? null : ventas[0];
 }
 
-module.exports = { totalVendido, totalPorCiudad, ventaMayor, primeraVenta };
+function clientesRecurrentes(ventas, c) {
+  const recurrentes = [];
+  for (let i = 0; i < ventas.length; i++) {
+    for (let j = i + 1; j < ventas.length; j++) {
+      c.ops++;
+      if (ventas[i].cliente === ventas[j].cliente &&
+          !recurrentes.includes(ventas[i].cliente)) {
+        recurrentes.push(ventas[i].cliente);
+      }
+    }
+  }
+  return recurrentes;
+}
+
+module.exports = { totalVendido, totalPorCiudad, ventaMayor, primeraVenta, clientesRecurrentes };
