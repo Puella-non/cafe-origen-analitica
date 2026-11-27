@@ -387,4 +387,51 @@ La lentitud aparece al buscar los **clientes que compran más de una vez**: el p
 Lo medimos: con 16.000 ventas tarda cerca de 2 segundos y con 100.000 tarda 1 minuto y medio. Con 1.000.000 tardaría unas 2,5 horas (estimado).
 
 Con las 12 ventas actuales no se nota, pero si el negocio crece, esta cuenta sería la primera en volverse inmanejable. 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+## Cadena vs una pasada
+
+| | totalCiudadCadena | totalCiudadUnaPasada |
+|---|---|---|
+| Recorridos | 4 | 1 |
+| Arreglos nuevos | 3 | 0 |
+| Tiempo | O(n) | O(n) |
+| Espacio | O(n) | O(1) |
+
+Las dos tardan más o menos lo mismo en crecer con n. La diferencia es la memoria: la cadena crea arreglos que crecen con las ventas, y la de una pasada solo usa dos variables.
+
+## ¿Por qué las dos son O(n) en tiempo si una recorre 4 veces?
+
+La cadena hace unos 4n pasos y la de una pasada hace n pasos. En Big O se eliminan las constantes: 4n se simplifica a n, porque lo que importa es cómo crece el tiempo cuando n crece, no cuántas veces se repite un recorrido.
+
+Si n se multiplica por 10, la cadena pasa de 4n a 40n (× 10) y la de una pasada de n a 10n (× 10). Las dos crecen igual de rápido; la cadena solo es unas 4 veces más lenta en cada tamaño.
+
+## Complejidad espacial de las funciones del motor
+
+n = ventas. Se cuenta solo la memoria extra, sin contar el arreglo de entrada.
+
+| Función | Espacio | Por qué |
+|---------|---------|---------|
+| totalVendido, totalVendidoM | O(1) | Solo un número (`total`) |
+| unidadesVendidas, unidadesVendidasM | O(1) | Solo un número |
+| ventasPorCiudad, ventasPorCiudadM | O(1)* | Un número. *`ventasPorCiudadM` crea un arreglo con `filter`, así que en realidad es O(n) |
+| ventaMayor | O(1) | Solo guarda una referencia a la mayor |
+| ticketPromedio | O(1) | Dos números |
+| totalCiudadUnaPasada | O(1) | Dos variables |
+| totalCiudadCadena | O(n) | Crea 3 arreglos que crecen con n |
+| totalPorCiudad | O(1)** | Un objeto con una clave por ciudad |
+| unidadesPorProducto | O(1)** | Un objeto con una clave por producto |
+| topProductosPorValor | O(p) | Objeto con p productos, más `Object.entries`, que copia todo a un arreglo |
+| ventasOrdenadasPorValor | O(n) | `[...ventas]` copia todo el arreglo |
+| ventasDelDia | O(n) | `filter` crea un arreglo nuevo (hasta n ventas) |
+| clientesRecurrentes | O(c) | Lista `recurrentes` con hasta c clientes |
+
+## Decisión: qué versión de totalCiudad queda en el motor
+
+**Decisión:** dejo `totalCiudadUnaPasada`.
+
+**Por qué (recursos):** da el mismo resultado que la cadena, pero hace 1 recorrido en vez de 4, no crea arreglos nuevos y usa memoria constante (O(1)). La cadena usa memoria que crece con las ventas (O(n)), y el servidor tiene memoria limitada.
+
+**Por qué (legibilidad):** la cadena se lee un poco más fácil, porque cada paso tiene un nombre (`map`, `filter`, `reduce`). Pero la versión de una pasada también es corta y clara: son 4 líneas, y con un comentario se entiende igual. La ganancia de la cadena en lectura es pequeña y el costo en memoria es real.
+
+**Qué hago con la otra:** `totalCiudadCadena` se queda solo como referencia para comparar en `verificar.js`, y no se usa en el reporte.

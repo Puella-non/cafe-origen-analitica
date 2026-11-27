@@ -107,6 +107,28 @@ function ventasDelDia(ventas, fecha) {
   return ventas.filter(v => v.fecha === fecha);
 }
 
+// Versión de referencia (solo para comparar en verificar.js): map → filter → map → reduce
+function totalCiudadCadena(ventas, ciudad) {
+  const buscada = normalizar(ciudad);
+  return ventas
+    .map(v => ({ ...v, ciudad: normalizar(v.ciudad) }))   // 1. normaliza la ciudad
+    .filter(v => v.ciudad === buscada)                     // 2. se queda con la ciudad pedida
+    .map(v => valorVentas(v))                              // 3. convierte cada venta en su valor
+    .reduce((acum, valor) => acum + valor, 0);             // 4. suma
+}
+
+// VERSIÓN DEL MOTOR: un solo ciclo, sin arreglos intermedios
+function totalCiudadUnaPasada(ventas, ciudad) {
+  const buscada = normalizar(ciudad);   // se calcula una sola vez
+  let total = 0;                        // el único dato extra: un número
+  for (const v of ventas) {
+    if (normalizar(v.ciudad) === buscada) {
+      total += valorVentas(v);
+    }
+  }
+  return total;
+}
+
 module.exports = {
   totalVendido, totalVendidoM,
   unidadesVendidas, unidadesVendidasM,
@@ -115,7 +137,8 @@ module.exports = {
   ventaMayor, totalPorCiudad, 
   unidadesPorProducto, topProductosPorValor,
   ventasOrdenadasPorValor, ventasDelDia,
-  valorVentas, normalizar, nombreCiudad
+  valorVentas, normalizar, nombreCiudad,
+  totalCiudadCadena, totalCiudadUnaPasada
 };
 
 if (require.main === module) {
@@ -137,6 +160,12 @@ console.log(Math.round(ticketPromedio([ventas[2]])), ventasPorCiudad([ventas[2]]
 //Entrada con un arreglo vacío
 console.log(totalVendido([]), unidadesVendidas([]), ventaMayor([]));
 console.log(Math.round(ticketPromedio([])), ventasPorCiudad([], "medellín"));
+
+// Semana 1 día 2 reto 7
+console.log(totalCiudadCadena(ventas, "medellín"));  
+console.log(totalCiudadCadena(ventas, "Bogotá "));   
+console.log(totalCiudadCadena(ventas, "Cali"));       
+console.log(totalCiudadCadena([], "medellín"));  
 }
 
 
